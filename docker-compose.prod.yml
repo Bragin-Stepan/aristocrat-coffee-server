@@ -15,7 +15,7 @@ services:
     networks:
       - app-network
 
-  app:
+  nest:
     build:
       context: .
       dockerfile: Dockerfile
@@ -24,7 +24,7 @@ services:
     depends_on:
       - postgres
     environment:
-      # - DATABASE_URL=postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?schema=public
+      - DATABASE_URL=${DATABASE_URL}
       # - JWT_SECRET=${JWT_SECRET}
       - NODE_ENV=${NODE_ENV}
     restart: unless-stopped
