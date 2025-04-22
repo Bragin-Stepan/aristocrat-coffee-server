@@ -1,6 +1,8 @@
 #!/bin/sh
 set -e
 
-npx prisma migrate deploy
+yarn prisma db push
+yarn prisma migrate deploy
+# npx prisma migrate deploy
 
 exec "$@"

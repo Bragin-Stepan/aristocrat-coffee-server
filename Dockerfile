@@ -27,7 +27,7 @@
 
 
 #----------------------- builder ---------------------#
-FROM node:22 AS builder
+FROM node:23-slim AS builder
 
 WORKDIR /usr/src/app
 
@@ -35,11 +35,11 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
 
 COPY . .
-RUN npx prisma generate
+RUN yarn prisma generate
 RUN yarn build
 
 #----------------------- Release ---------------------#
-FROM node:22
+FROM node:23-slim
 
 WORKDIR /usr/src/app
 
