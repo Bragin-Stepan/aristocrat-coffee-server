@@ -12,8 +12,6 @@ RUN npx prisma generate
 
 RUN yarn build
 
-RUN npx prisma migrate deploy
-
 FROM node:20-alpine
 
 WORKDIR /usr/src/app
