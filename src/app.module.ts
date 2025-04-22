@@ -6,7 +6,7 @@ import { UserModule } from './user/user.module';
 @Module({  
   imports: [
     ConfigModule.forRoot(),
-    AuthModule,
+    // AuthModule,
     UserModule
   ],
 })
