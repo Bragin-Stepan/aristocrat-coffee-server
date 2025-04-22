@@ -1,0 +1,19 @@
+version: 1
+project: aristocrat-coffee
+
+environment:
+    variables:
+        PASSWORD: <password>        
+
+containers:
+    postgres-docker:
+        image: postgres-docker
+        variables:
+            POSTGRES_PASSWORD: $PASSWORD
+            POSTGRES_USER: postgres
+            POSTGRES_DB: postgres
+
+    aristocrat-server:
+    image: aristocrat-server
+    variables:
+        DATABASE_URL: postgresql://postgres:{$PASSWORD}@postgres:5432/aristocrat-coffee?schema=public
