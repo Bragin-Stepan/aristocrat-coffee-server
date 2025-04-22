@@ -1,0 +1,31 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String   @id @default(cuid())
+  telegramID Int      @unique @map("telegram_id")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  // email    String @unique
+  // password String
+
+  username    String?
+  firstName   String? @map("first_name")
+  lastName    String? @map("last_name")
+  role        String  @default("user")
+  phoneNumber String? @default("") @map("phone_number")
+
+  isTGPremium    Boolean @default(false) @map("is_premium")
+  isWasTGPremium Boolean @default(false) @map("is_was_premium")
+  photoURL       String? @map("photo_url")
+  languageCode   String  @map("language_code")
+
+  @@map("user")
+}
