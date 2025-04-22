@@ -10,9 +10,9 @@ COPY . .
 
 RUN npx prisma generate
 
-RUN npx prisma migrate deploy
-
 RUN yarn build
+
+RUN npx prisma migrate deploy
 
 FROM node:20-alpine
 
