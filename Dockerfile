@@ -6,7 +6,7 @@ COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile --production
 
 COPY . .
-RUN yarn build
+RUN yarn start:prod
 
 EXPOSE ${APP_PORT}
 
