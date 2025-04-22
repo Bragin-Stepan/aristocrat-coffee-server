@@ -29,6 +29,8 @@
 #----------------------- builder ---------------------#
 FROM node:23-slim AS builder
 
+RUN apk add --no-cache openssl python3 make g++
+
 WORKDIR /usr/src/app
 
 COPY package.json yarn.lock ./
@@ -41,6 +43,8 @@ RUN yarn build
 #----------------------- Release ---------------------#
 FROM node:23-slim
 
+RUN apk add --no-cache openssl
+
 WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
@@ -48,4 +52,6 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/package.json ./
 COPY --from=builder /usr/src/app/prisma ./prisma/
 
-CMD ["yarn", "start:migrate:prod"]
+ENTRYPOINT ["./run.sh"]
+
+CMD ["yarn", "start:prod"]
