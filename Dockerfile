@@ -27,9 +27,7 @@
 
 
 #----------------------- builder ---------------------#
-FROM node:23-slim AS builder
-
-RUN apk add --no-cache openssl python3 make g++
+FROM node:22 AS builder
 
 WORKDIR /usr/src/app
 
@@ -41,9 +39,7 @@ RUN npx prisma generate
 RUN yarn build
 
 #----------------------- Release ---------------------#
-FROM node:23-slim
-
-RUN apk add --no-cache openssl
+FROM node:22
 
 WORKDIR /usr/src/app
 
