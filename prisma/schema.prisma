@@ -7,6 +7,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Role {
+  USER      @map("user")
+  SELLER    @map("seller")
+  ADMIN     @map("admin")
+  DEVELOPER @map("developer")
+
+  @@map("roles")
+}
+
 model User {
   id         String   @id @default(cuid())
   telegramID Int      @unique @map("telegram_id")
@@ -19,7 +28,7 @@ model User {
   username    String?
   firstName   String? @map("first_name")
   lastName    String? @map("last_name")
-  role        String  @default("user")
+  role        Role    @default(USER)
   phoneNumber String? @default("") @map("phone_number")
 
   isTGPremium    Boolean @default(false) @map("is_premium")

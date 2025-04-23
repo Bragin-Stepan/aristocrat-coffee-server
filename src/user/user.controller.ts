@@ -1,6 +1,7 @@
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UsePipes, ValidationPipe } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
+import { changeRoleDto } from './dto/change-rule.dto';
 
 @Controller('user')
 export class UserController {
@@ -25,7 +26,6 @@ export class UserController {
 		return this.userService.getUser(id);
 	}
 
-  
 	@HttpCode(200)
 	@Delete(':id')
 	async delete(@Param('id') id: string) {
@@ -39,5 +39,12 @@ export class UserController {
 		return this.userService.updateUser(id, dto)
 	}
 
-  
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Post('change')
+  async changeRole(
+    @Body() dto: changeRoleDto,
+  ) {
+    return this.userService.changeUserRole(dto);
+  }
 }
