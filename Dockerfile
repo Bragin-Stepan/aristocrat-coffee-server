@@ -50,4 +50,4 @@ COPY --from=builder /usr/src/app/package.json ./
 
 # ENTRYPOINT ["./run.sh"]
 
-CMD ["yarn", "start:prod"]
+CMD ["yarn", "start:migrate:prod"]
