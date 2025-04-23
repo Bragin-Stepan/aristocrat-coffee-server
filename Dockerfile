@@ -23,8 +23,9 @@ COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/package.json ./
 COPY --from=builder /usr/src/app/prisma ./prisma/
 
-RUN yarn add -g prisma pm2
-RUN prisma generate
+# RUN yarn add -g prisma pm2
+RUN yarn add @prisma/client
+RUN yarn prisma generate
 
 CMD ["yarn", "start:migrate:prod"]
 
