@@ -35,6 +35,7 @@ export class UserService {
 				...userData,
 			},
 		});
+		return this.formatUserResponse(user);
 	}
 
 	async getUser(id: string) {
