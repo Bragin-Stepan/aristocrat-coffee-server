@@ -119,6 +119,7 @@ export class UserService {
 			isTGPremium: user.isTGPremium,
 			isWasTGPremium: user.isWasTGPremium,
 			photoURL: user.photoURL,
+			languageCode: user.languageCode,
 			createdAt: user.createdAt,
 			updatedAt: user.updatedAt,
 		};
