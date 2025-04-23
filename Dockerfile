@@ -27,20 +27,19 @@
 
 
 #----------------------- builder ---------------------#
-FROM node:23-slim AS builder
+FROM node:20-alpine AS builder
 
 WORKDIR /usr/src/app
 
 COPY package.json yarn.lock ./
 RUN yarn install --frozen-lockfile
-RUN apt-get update -y && apt-get install -y openssl
 
 COPY . .
 RUN yarn prisma generate
 RUN yarn build
 
 #----------------------- Release ---------------------#
-FROM node:23-slim
+FROM node:20-alpine
 
 WORKDIR /usr/src/app
 
