@@ -27,7 +27,7 @@
 
 
 #----------------------- builder ---------------------#
-FROM node:20-alpine AS builder
+FROM node:23-slim AS builder
 
 WORKDIR /usr/src/app
 
@@ -39,15 +39,15 @@ RUN yarn prisma generate
 RUN yarn build
 
 #----------------------- Release ---------------------#
-FROM node:20-alpine
+FROM node:23-slim
 
 WORKDIR /usr/src/app
 
 COPY --from=builder /usr/src/app/node_modules ./node_modules
 COPY --from=builder /usr/src/app/dist ./dist
 COPY --from=builder /usr/src/app/package.json ./
-COPY --from=builder /usr/src/app/prisma ./prisma/
+# COPY --from=builder /usr/src/app/prisma ./prisma/
 
-ENTRYPOINT ["./run.sh"]
+# ENTRYPOINT ["./run.sh"]
 
 CMD ["yarn", "start:prod"]
