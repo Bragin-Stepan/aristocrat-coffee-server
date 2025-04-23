@@ -25,4 +25,4 @@ COPY --from=builder /usr/src/app/prisma ./prisma/
 RUN yarn add @prisma/client
 RUN yarn prisma generate
 
-CMD ["sh", "-c", "yarn prisma migrate status && yarn prisma migrate deploy && yarn start:prod"]
+CMD ["sh", "-c", "yarn prisma migrate resolve --applied 20250423185623_initial_state && yarn prisma migrate deploy && yarn start:prod"]
