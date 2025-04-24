@@ -4,14 +4,12 @@ import {
 	NotFoundException,
 	UnauthorizedException,
 } from '@nestjs/common';
-import { AuthDto } from './dto/auth.dto';
-import { faker } from '@faker-js/faker';
-import { hash, verify } from 'argon2';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-
+import { UserDto } from 'src/user/dto/user.dto';
+import { returnUserObject } from 'src/user/return-user.object';
 
 // Все работает корректно, но в этом проекте она не нужна
 @Injectable()
@@ -21,38 +19,29 @@ export class AuthService {
 		private jwt: JwtService,
 	) {}
 
-	
+	async login(dto: UserDto) {
+		const existingUser = await this.prisma.user.findUnique({
+			where: { telegramID: dto.telegramID },
+		});
 
-	// async register(dto: AuthDto) {
-	// 	const oldUser = await this.prisma.user.findUnique({
-	// 		where: {
-	// 			email: dto.email,
-	// 		},
-	// 	});
-	// 	if (oldUser) {
-	// 		throw new BadRequestException('User already exists');
-	// 	}
+		const userData = this.prepareUserData(dto, existingUser?.isWasTGPremium);
 
-	// 	const user = await this.prisma.user.create({
-	// 		data: {
-	// 			email: dto.email,
-	// 			username: faker.person.firstName(),
-	// 			photoURL: faker.image.avatar(),
-	// 			phoneNumber: faker.phone.number(),
-	// 			password: await hash(dto.password),
-	// 		},
-	// 	});
+		const user = await this.prisma.user.upsert({
+			where: {
+				telegramID: dto.telegramID,
+				// phoneNumber: dto.phoneNumber, // для нормальной безопасности нужон + одноразовый код в тг
+			},
+			update: {
+				...userData,
+				updatedAt: new Date(),
+			},
+			create: {
+				telegramID: dto.telegramID,
+				...userData,
+			},
+			select: returnUserObject,
+		});
 
-	// 	this.getAuthData(user);
-	// }
-
-	// async login(dto: AuthDto) {
-	// 	const user = await this.validateUser(dto);
-	// 	this.getAuthData(user);
-	// }
-
-		async login(telegramID: string) {
-		const user = await this.validateUser(telegramID);
 		this.getAuthData(user);
 	}
 
@@ -85,13 +74,6 @@ export class AuthService {
 		return { accessToken, refreshToken };
 	}
 
-	private returnUserFields(user: User) {
-		return {
-			id: user.id,
-			// email: user.email,
-		};
-	}
-
 	private async validateUser(telegramID) {
 		const user = await this.prisma.user.findUnique({
 			where: { telegramID: telegramID },
@@ -103,12 +85,26 @@ export class AuthService {
 		return user;
 	}
 
-  private async getAuthData (user: User) {
-
-    const tokens = await this.issueTokens(user.id);
+	private async getAuthData(user: User) {
+		const tokens = await this.issueTokens(user.id);
 		return {
-			user: this.returnUserFields(user),
+			user,
 			...tokens,
 		};
-  }
+	}
+
+	private prepareUserData(dto: UserDto, currentWasPremium?: boolean) {
+		const isWasPremium = dto.isTGPremium ? true : currentWasPremium;
+
+		return {
+			username: dto.username,
+			firstName: dto.firstName,
+			lastName: dto.lastName,
+			isTGPremium: dto.isTGPremium,
+			isWasTGPremium: isWasPremium,
+			phoneNumber: dto.phoneNumber,
+			photoURL: dto.photoURL,
+			languageCode: dto.languageCode,
+		};
+	}
 }

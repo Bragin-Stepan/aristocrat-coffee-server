@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, HttpCode, Param, Patch, Post, UsePipes, 
 import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { changeRoleDto } from './dto/change-rule.dto';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 
 @Controller('user')
 export class UserController {
@@ -12,16 +13,17 @@ export class UserController {
 		return this.userService.findAll();
 	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
-	@Post()
-	async auth(@Body() dto: UserDto) {
-		return this.userService.auth(dto);
-	}
+	// @UsePipes(new ValidationPipe())
+	// @HttpCode(200)
+	// @Post()
+	// async auth(@Body() dto: UserDto) {
+	// 	return this.userService.auth(dto);
+	// }
 
   @UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Get(':id')
+	@Auth()
   async getUser(@Param('id') id: string) {
 		return this.userService.getUser(id);
 	}
