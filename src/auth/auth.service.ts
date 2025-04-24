@@ -42,7 +42,7 @@ export class AuthService {
 			select: returnUserObject,
 		});
 
-		this.getAuthData(user);
+		return this.getAuthData(user);
 	}
 
 	async getNewTokens(refreshToken: string) {
@@ -57,7 +57,7 @@ export class AuthService {
 
 		if (!user) throw new NotFoundException('User not found');
 
-		this.getAuthData(user);
+		return this.getAuthData(user);
 	}
 
 	private async issueTokens(userId: string) {
@@ -74,22 +74,10 @@ export class AuthService {
 		return { accessToken, refreshToken };
 	}
 
-	private async validateUser(telegramID) {
-		const user = await this.prisma.user.findUnique({
-			where: { telegramID: telegramID },
-		});
-		if (!user) {
-			throw new NotFoundException('User not found');
-		}
-
-		return user;
-	}
-
 	private async getAuthData(user: User) {
 		const tokens = await this.issueTokens(user.id);
 		return {
-			id: user.id,
-			username: user.username,
+			...user,
 			...tokens,
 		};
 	}
