@@ -16,7 +16,7 @@ export class CategoryService {
 		});
 	}
 
-	async create(user: User, name: string) {
+	async create(name: string) {
 		const maxOrder = await this.prisma.category.findFirst({
 			orderBy: { order: 'desc' },
 			select: { order: true },
@@ -32,7 +32,7 @@ export class CategoryService {
 		});
 	}
 
-	async update(id: string, user: User, name: string) {
+	async update(id: string, name: string) {
 		return this.prisma.category.update({
 			where: { id },
 			data: {
@@ -41,13 +41,13 @@ export class CategoryService {
 		});
 	}
 
-	async delete(id: string, user: User) {
+	async delete(id: string) {
 		return this.prisma.category.delete({
 			where: { id },
 		});
 	}
 
-	async updateOrder(ids: string[], user: User) {
+	async updateOrder(ids: string[]) {
 		for (let i = 0; i < ids.length; i++) {
 			const categoryId = ids[i];
 			await this.prisma.category.update({

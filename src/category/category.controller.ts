@@ -25,30 +25,30 @@ export class CategoryController {
 	@HttpCode(200)
 	@Post()
   @Auth([Role.ADMIN])
-	async create(@Body() user: User, name: string) {
-		return this.categoryService.create(user, name);
+	async create(@Body() name: string) {
+		return this.categoryService.create(name);
 	}
 
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put(':id')
   @Auth([Role.ADMIN])
-	async update(@Param('id') id: string, @Body() user: User, name: string) {
-		return this.categoryService.update(id, user, name);
+	async update(@Param('id') id: string, @Body() name: string) {
+		return this.categoryService.update(id, name);
 	}
 
 	@HttpCode(200)
 	@Delete(':id')
   @Auth([Role.ADMIN])
 	async delete(@Param('id') id: string, @Body() user: User) {
-		return this.categoryService.delete(id, user);
+		return this.categoryService.delete(id);
 	}
 
   @UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put('sort')
   @Auth([Role.ADMIN])
-	async updateOrder(@Body() ids: string[], user: User) {
-		return this.categoryService.updateOrder(ids, user);
+	async updateOrder(@Body() ids: string[]) {
+		return this.categoryService.updateOrder(ids);
 	}
 }
