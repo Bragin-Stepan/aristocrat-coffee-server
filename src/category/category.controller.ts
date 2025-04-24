@@ -11,8 +11,7 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { CategoryDto } from './dto/category.dto';
-
+import { Role, User } from '@prisma/client';
 @Controller('categories')
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
@@ -24,20 +23,27 @@ export class CategoryController {
 
 	@HttpCode(200)
 	@Post()
-	async create(@Body() dto: CategoryDto) {
-		return this.categoryService.create(dto);
+	async create(@Body() user: User, name: string) {
+		return this.categoryService.create(user, name);
 	}
 
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put(':id')
-	async update(@Param('id') id: string, @Body() dto: CategoryDto) {
-		return this.categoryService.update(id, dto);
+	async update(@Param('id') id: string, @Body() user: User, name: string) {
+		return this.categoryService.update(id, user, name);
 	}
 
 	@HttpCode(200)
 	@Delete(':id')
-	async delete(@Param('id') id: string, @Body() dto: CategoryDto) {
-		return this.categoryService.delete(id, dto);
+	async delete(@Param('id') id: string, @Body() user: User) {
+		return this.categoryService.delete(id, user);
+	}
+
+  @UsePipes(new ValidationPipe())
+	@HttpCode(200)
+	@Put('sort')
+	async updateOrder(@Body() ids: string[], user: User) {
+		return this.categoryService.updateOrder(ids, user);
 	}
 }
