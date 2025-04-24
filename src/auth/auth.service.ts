@@ -21,61 +21,68 @@ export class AuthService {
 		private jwt: JwtService,
 	) {}
 
-	async register(dto: AuthDto) {
-		// const oldUser = await this.prisma.user.findUnique({
-		// 	where: {
-		// 		email: dto.email,
-		// 	},
-		// });
-		// if (oldUser) {
-		// 	throw new BadRequestException('User already exists');
-		// }
+	
 
-		// const user = await this.prisma.user.create({
-		// 	data: {
-		// 		email: dto.email,
-		// 		username: faker.person.firstName(),
-		// 		photoURL: faker.image.avatar(),
-		// 		phoneNumber: faker.phone.number(),
-		// 		password: await hash(dto.password),
-		// 	},
-		// });
-
-		// this.getAuthData(user);
-	}
-
-	async login(dto: AuthDto) {
-		// const user = await this.validateUser(dto);
-		// this.getAuthData(user);
-	}
-
-	async getNewTokens(refreshToken: string) {
-	// 	const result = await this.jwt.verifyAsync(refreshToken);
-	// 	if (!result) throw new UnauthorizedException('Invalid refresh token');
-
-	// 	const user = await this.prisma.user.findUnique({
+	// async register(dto: AuthDto) {
+	// 	const oldUser = await this.prisma.user.findUnique({
 	// 		where: {
-	// 			id: result.id,
+	// 			email: dto.email,
 	// 		},
 	// 	});
+	// 	if (oldUser) {
+	// 		throw new BadRequestException('User already exists');
+	// 	}
 
-	// 	if (!user) throw new NotFoundException('User not found');
+	// 	const user = await this.prisma.user.create({
+	// 		data: {
+	// 			email: dto.email,
+	// 			username: faker.person.firstName(),
+	// 			photoURL: faker.image.avatar(),
+	// 			phoneNumber: faker.phone.number(),
+	// 			password: await hash(dto.password),
+	// 		},
+	// 	});
 
 	// 	this.getAuthData(user);
 	// }
 
-	// private async issueTokens(userId: string) {
-	// 	const data = { id: userId };
+	// async login(dto: AuthDto) {
+	// 	const user = await this.validateUser(dto);
+	// 	this.getAuthData(user);
+	// }
 
-	// 	const accessToken = this.jwt.sign(data, {
-	// 		expiresIn: '1h',
-	// 	});
+		async login(telegramID: string) {
+		const user = await this.validateUser(telegramID);
+		this.getAuthData(user);
+	}
 
-	// 	const refreshToken = this.jwt.sign(data, {
-	// 		expiresIn: '7d',
-	// 	});
+	async getNewTokens(refreshToken: string) {
+		const result = await this.jwt.verifyAsync(refreshToken);
+		if (!result) throw new UnauthorizedException('Invalid refresh token');
 
-	// 	return { accessToken, refreshToken };
+		const user = await this.prisma.user.findUnique({
+			where: {
+				id: result.id,
+			},
+		});
+
+		if (!user) throw new NotFoundException('User not found');
+
+		this.getAuthData(user);
+	}
+
+	private async issueTokens(userId: string) {
+		const data = { id: userId };
+
+		const accessToken = this.jwt.sign(data, {
+			expiresIn: '1h',
+		});
+
+		const refreshToken = this.jwt.sign(data, {
+			expiresIn: '7d',
+		});
+
+		return { accessToken, refreshToken };
 	}
 
 	private returnUserFields(user: User) {
@@ -85,26 +92,23 @@ export class AuthService {
 		// };
 	}
 
-	private async validateUser(dto: AuthDto) {
-		// const user = await this.prisma.user.findUnique({
-		// 	where: { email: dto.email },
-		// });
-		// if (!user) {
-		// 	throw new NotFoundException('User not found');
-		// }
+	private async validateUser(telegramID) {
+		const user = await this.prisma.user.findUnique({
+			where: { telegramID: telegramID },
+		});
+		if (!user) {
+			throw new NotFoundException('User not found');
+		}
 
-		// const isVailde = await verify(user.password, dto.password);
-		// if (!isVailde) throw new UnauthorizedException('Invalid password');
-
-		// return user;
+		return user;
 	}
 
   private async getAuthData (user: User) {
 
-  //   const tokens = await this.issueTokens(user.id);
-	// 	return {
-	// 		user: this.returnUserFields(user),
-	// 		...tokens,
-	// 	};
+    const tokens = await this.issueTokens(user.id);
+		return {
+			user: this.returnUserFields(user),
+			...tokens,
+		};
   }
 }

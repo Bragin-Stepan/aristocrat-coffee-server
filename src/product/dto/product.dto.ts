@@ -6,14 +6,14 @@ export class ProductDto implements Prisma.ProductUpdateInput {
 	name: string
 
 	@IsNumber()
-	price: number
+	variants: Prisma.ProductVariantUpdateManyWithoutProductNestedInput | undefined;
 
 	@IsOptional()
 	@IsString()
-	description: string
+	description?: string
 
 	@IsString()
-	image: string
+	images: string[]
 
 	@IsString()
 	categoryId: string

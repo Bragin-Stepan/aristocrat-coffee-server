@@ -8,6 +8,7 @@ import { UserDto } from './dto/user.dto';
 import { Role, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { changeRoleDto } from './dto/change-rule.dto';
+import { returnUserObject } from './return-user.object';
 
 @Injectable()
 export class UserService {
@@ -34,14 +35,19 @@ export class UserService {
 				telegramID: dto.telegramID,
 				...userData,
 			},
+			select: returnUserObject,
 		});
-		return this.formatUserResponse(user);
+
+		return user;
 	}
 
 	async getUser(id: string) {
-		const user = await this.prisma.user.findUnique({ where: { id } });
+		const user = await this.prisma.user.findUnique({
+			where: { id },
+			select: returnUserObject,
+		});
 		if (!user) throw new NotFoundException('User not found');
-		return this.formatUserResponse(user);
+		return user;
 	}
 
 	async deleteUser(id: string) {
@@ -68,13 +74,16 @@ export class UserService {
 				...userData,
 				updatedAt: new Date(),
 			},
+			select: returnUserObject,
 		});
 
-		return this.formatUserResponse(user);
+		return user;
 	}
 
 	async changeUserRole(dto: changeRoleDto) {
-		const user = await this.prisma.user.findUnique({ where: { id: dto.userId } });
+		const user = await this.prisma.user.findUnique({
+			where: { id: dto.userId },
+		});
 		if (!user) throw new NotFoundException('User not found');
 
 		if (user.role !== Role.ADMIN) {
@@ -87,9 +96,10 @@ export class UserService {
 		const updatedUser = await this.prisma.user.update({
 			where: { id: dto.targetId },
 			data: { role: dto.newRole },
+			select: returnUserObject,
 		});
 
-		return this.formatUserResponse(updatedUser);
+		return user;
 	}
 
 	private prepareUserData(dto: UserDto, currentWasPremium?: boolean) {
@@ -104,24 +114,6 @@ export class UserService {
 			phoneNumber: dto.phoneNumber,
 			photoURL: dto.photoURL,
 			languageCode: dto.languageCode,
-		};
-	}
-
-	private formatUserResponse(user: User) {
-		return {
-			id: user.id,
-			telegramID: user.telegramID,
-			username: user.username,
-			firstName: user.firstName,
-			lastName: user.lastName,
-			role: user.role,
-			phoneNumber: user.phoneNumber,
-			isTGPremium: user.isTGPremium,
-			isWasTGPremium: user.isWasTGPremium,
-			photoURL: user.photoURL,
-			languageCode: user.languageCode,
-			createdAt: user.createdAt,
-			updatedAt: user.updatedAt,
 		};
 	}
 
