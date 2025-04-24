@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
 import { Role, User } from '@prisma/client';
+import { Auth } from 'src/auth/decorators/auth.decorator';
 @Controller('categories')
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
@@ -23,6 +24,7 @@ export class CategoryController {
 
 	@HttpCode(200)
 	@Post()
+  @Auth([Role.ADMIN])
 	async create(@Body() user: User, name: string) {
 		return this.categoryService.create(user, name);
 	}
@@ -30,12 +32,14 @@ export class CategoryController {
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put(':id')
+  @Auth([Role.ADMIN])
 	async update(@Param('id') id: string, @Body() user: User, name: string) {
 		return this.categoryService.update(id, user, name);
 	}
 
 	@HttpCode(200)
 	@Delete(':id')
+  @Auth([Role.ADMIN])
 	async delete(@Param('id') id: string, @Body() user: User) {
 		return this.categoryService.delete(id, user);
 	}
@@ -43,6 +47,7 @@ export class CategoryController {
   @UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put('sort')
+  @Auth([Role.ADMIN])
 	async updateOrder(@Body() ids: string[], user: User) {
 		return this.categoryService.updateOrder(ids, user);
 	}

@@ -11,7 +11,6 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UserDto } from 'src/user/dto/user.dto';
 import { returnUserObject } from 'src/user/return-user.object';
 
-// Все работает корректно, но в этом проекте она не нужна
 @Injectable()
 export class AuthService {
 	constructor(
@@ -29,7 +28,8 @@ export class AuthService {
 		const user = await this.prisma.user.upsert({
 			where: {
 				telegramID: dto.telegramID,
-				// phoneNumber: dto.phoneNumber, // для нормальной безопасности нужон + одноразовый код в тг
+				//! phoneNumber: dto.phoneNumber, // для нормальной безопасности нужон
+				//! verificationCode: dto.verificationCode, // + одноразовый код в тг
 			},
 			update: {
 				...userData,

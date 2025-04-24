@@ -3,6 +3,7 @@ import { UserService } from './user.service';
 import { UserDto } from './dto/user.dto';
 import { changeRoleDto } from './dto/change-rule.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
+import { Role } from '@prisma/client';
 
 @Controller('user')
 export class UserController {
@@ -28,6 +29,7 @@ export class UserController {
 		return this.userService.getUser(id);
 	}
 
+	@Auth()
 	@HttpCode(200)
 	@Delete(':id')
 	async delete(@Param('id') id: string) {
@@ -37,6 +39,7 @@ export class UserController {
   @UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Patch(':id')
+	@Auth()
 	async updateUser(@Param('id') id: string, @Body() dto: UserDto) {
 		return this.userService.updateUser(id, dto)
 	}
@@ -44,6 +47,7 @@ export class UserController {
   @UsePipes(new ValidationPipe())
   @HttpCode(200)
   @Post('change')
+	@Auth([Role.ADMIN])
   async changeRole(
     @Body() dto: changeRoleDto,
   ) {
