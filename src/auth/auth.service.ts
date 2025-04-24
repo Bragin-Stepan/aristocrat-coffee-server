@@ -86,10 +86,10 @@ export class AuthService {
 	}
 
 	private returnUserFields(user: User) {
-		// return {
-		// 	id: user.id,
-		// 	email: user.email,
-		// };
+		return {
+			id: user.id,
+			// email: user.email,
+		};
 	}
 
 	private async validateUser(telegramID) {
