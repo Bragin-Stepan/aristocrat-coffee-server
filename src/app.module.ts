@@ -8,7 +8,7 @@ import { ProductModule } from './product/product.module';
 @Module({  
   imports: [
     ConfigModule.forRoot(),
-    // AuthModule,
+    AuthModule,
     UserModule,
     CategoryModule,
     ProductModule
