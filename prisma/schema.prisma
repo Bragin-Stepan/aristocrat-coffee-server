@@ -8,10 +8,9 @@ datasource db {
 }
 
 enum Role {
-  USER      @map("user")
-  SELLER    @map("seller")
-  ADMIN     @map("admin")
-  DEVELOPER @map("developer")
+  USER   @map("user")
+  SELLER @map("seller")
+  ADMIN  @map("admin")
 
   @@map("roles")
 }
@@ -37,4 +36,48 @@ model User {
   languageCode   String  @map("language_code")
 
   @@map("user")
+}
+
+model Product {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name        String   @unique
+  description String
+  components  String
+  images      String[]
+
+  category   Category? @relation(fields: [categoryId], references: [id])
+  categoryId String?   @map("category_id")
+
+  variants ProductVariant[]
+
+  @@map("product")
+}
+
+model ProductVariant {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  price     Int
+  size      String
+  productId String @map("product_id")
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@map("product_variant")
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  name String @unique
+
+  products Product[]
+
+  @@map("category")
 }
