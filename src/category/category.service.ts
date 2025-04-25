@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { returnCategoryObject } from './return-category.object';
-import { Role, User } from '@prisma/client';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 

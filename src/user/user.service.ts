@@ -15,7 +15,13 @@ export class UserService {
 	constructor(private prisma: PrismaService) {}
 
 	async findAll() {
-		return this.prisma.user.findMany();
+		return this.prisma.user.findMany(
+			{
+				orderBy: {
+					updatedAt: 'desc',
+				},
+			},
+		);
 	}
 
 	async auth(dto: UserDto) {
