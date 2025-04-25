@@ -56,19 +56,19 @@ export class ProductService {
 				categoryId: category.id,
 			},
       orderBy: {
-        order: 'asc'
+        priority: 'asc'
       },
 			select: returnProductObject,
 		});
 	}
 
 	async create(dto: ProductDto) {
-		const maxOrder = await this.prisma.product.findFirst({
-			orderBy: { order: 'desc' },
-			select: { order: true },
+		const maxPriority = await this.prisma.product.findFirst({
+			orderBy: { priority: 'desc' },
+			select: { priority: true },
 		});
 
-		const newOrder = maxOrder ? maxOrder.order + 1 : 0;
+		const newPriority = maxPriority ? maxPriority.priority + 1 : 0;
 
 		return this.prisma.product.create({
 			data: {
@@ -77,7 +77,7 @@ export class ProductService {
 				components: dto.components ?? '',
 				images: dto.images,
 				categoryId: dto.categoryId,
-				order: newOrder,
+				priority: newPriority,
 				variants: {
 					create: dto.variants.map(variant => ({
 						price: variant.price,

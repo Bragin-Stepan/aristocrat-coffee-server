@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { returnCategoryObject } from './return-category.object';
 import { Role, User } from '@prisma/client';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -12,24 +12,24 @@ export class CategoryService {
 	async getAll() {
 		return this.prisma.category.findMany({
 			orderBy: {
-				order: 'asc',
+				priority: 'asc',
 			},
 			select: returnCategoryObject,
 		});
 	}
 
 	async create(name: string) {
-		const maxOrder = await this.prisma.category.findFirst({
-			orderBy: { order: 'desc' },
-			select: { order: true },
+		const maxPriority = await this.prisma.category.findFirst({
+			orderBy: { priority: 'desc' },
+			select: { priority: true },
 		});
 
-		const newOrder = maxOrder ? maxOrder.order + 1 : 0;
+		const newPriority = maxPriority ? maxPriority.priority + 1 : 0;
 
 		return this.prisma.category.create({
 			data: {
 				name: name,
-				order: newOrder,
+				priority: newPriority,
 			},
 		});
 	}
@@ -71,7 +71,7 @@ export class CategoryService {
 		}
 	}
 
-	async updateOrder(dto: UpdateOrderDto) {
+	async updatePriority(dto: UpdatePriorityDto) {
 		const { ids } = dto;
 
 		const existingCategories = await this.prisma.category.findMany({
@@ -86,7 +86,7 @@ export class CategoryService {
 			const categoryId = ids[i];
 			await this.prisma.category.update({
 				where: { id: categoryId },
-				data: { order: i },
+				data: { priority: i },
 			});
 		}
 
@@ -103,7 +103,7 @@ export class CategoryService {
 		return this.prisma.category.findMany({
 			select: returnCategoryObject,
 			orderBy: {
-				order: 'asc',
+				priority: 'asc',
 			},
 		});
 	}

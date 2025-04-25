@@ -10,7 +10,7 @@ export const returnProductObject: Prisma.ProductSelect = {
 	variants: true,
 	createdAt: true,
 	updatedAt: true,
-	order:true,
+	priority:true,
 	category: { select: returnCategoryObject }
 }
 

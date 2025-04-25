@@ -13,7 +13,7 @@ import {
 import { CategoryService } from './category.service';
 import { Role } from '@prisma/client';
 import { Auth } from 'src/auth/decorators/auth.decorator';
-import { UpdateOrderDto } from './dto/update-order.dto';
+import { UpdatePriorityDto } from './dto/update-priority.dto';
 @Controller('categories')
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
@@ -49,7 +49,7 @@ export class CategoryController {
   @HttpCode(200)
   @Put('/sort/edit')
   @Auth([Role.ADMIN])
-  async updateOrder(@Body() dto: UpdateOrderDto) {
-    return this.categoryService.updateOrder(dto);
+  async updatePriority(@Body() dto: UpdatePriorityDto) {
+    return this.categoryService.updatePriority(dto);
   }
 }
