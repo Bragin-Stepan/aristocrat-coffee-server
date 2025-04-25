@@ -4,6 +4,7 @@ import { UserDto } from './dto/user.dto';
 import { changeRoleDto } from './dto/change-rule.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from '@prisma/client';
+import { CurrentUser } from 'src/auth/decorators/user.decorator';
 
 @Controller('user')
 export class UserController {
@@ -29,18 +30,17 @@ export class UserController {
 		return this.userService.getUser(id);
 	}
 
-	@Auth()
+	@Auth([Role.ADMIN])
 	@HttpCode(200)
 	@Delete(':id')
-	async delete(@Param('id') id: string) {
+	async delete(@CurrentUser('id') id: string) {
 		return this.userService.deleteUser(id)
 	}
 
   @UsePipes(new ValidationPipe())
 	@HttpCode(200)
-	@Patch(':id')
 	@Auth()
-	async updateUser(@Param('id') id: string, @Body() dto: UserDto) {
+	async updateUser(@CurrentUser('id') id: string, @Body() dto: UserDto) {
 		return this.userService.updateUser(id, dto)
 	}
 
