@@ -15,13 +15,6 @@ export class UserController {
 		return this.userService.findAll();
 	}
 
-	// @UsePipes(new ValidationPipe())
-	// @HttpCode(200)
-	// @Post()
-	// async auth(@Body() dto: UserDto) {
-	// 	return this.userService.auth(dto);
-	// }
-
   @UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Get(':id')

@@ -1,18 +1,32 @@
 import { Prisma } from '@prisma/client'
-import { IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator'
 
-export class ProductDto implements Prisma.ProductUpdateInput {
+export class VariantDto {
+
+	@IsNumber()
+	price: number
+
+	@IsString()
+	size: string
+}
+
+export class ProductDto {
 	@IsString()
 	name: string
 
-	@IsNumber()
-	variants: Prisma.ProductVariantUpdateManyWithoutProductNestedInput | undefined;
+	@IsArray()
+	variants: VariantDto[];
 
 	@IsOptional()
 	@IsString()
 	description?: string
 
+	@IsOptional()
 	@IsString()
+	components?: string
+
+	@IsArray()
+	@IsString({ each: true })
 	images: string[]
 
 	@IsString()

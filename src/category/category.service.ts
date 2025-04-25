@@ -10,7 +10,12 @@ export class CategoryService {
 	constructor(private prisma: PrismaService) {}
 
 	async getAll() {
-		return this.getCategories()
+		return this.prisma.category.findMany({
+			orderBy: {
+				order: 'asc',
+			},
+			select: returnCategoryObject,
+		});
 	}
 
 	async create(name: string) {
@@ -27,6 +32,19 @@ export class CategoryService {
 				order: newOrder,
 			},
 		});
+	}
+
+	async getById(id: string) {
+		const category = await this.prisma.category.findUnique({
+			where: {
+				id,
+			},
+			select: returnCategoryObject,
+		});
+
+		if (!category) throw new Error('Category not found');
+
+		return category;
 	}
 
 	async update(id: string, name: string) {
@@ -54,8 +72,8 @@ export class CategoryService {
 	}
 
 	async updateOrder(dto: UpdateOrderDto) {
-    const { ids } = dto;
-    
+		const { ids } = dto;
+
 		const existingCategories = await this.prisma.category.findMany({
 			where: { id: { in: ids } },
 		});
@@ -72,7 +90,7 @@ export class CategoryService {
 			});
 		}
 
-    return this.getCategories()
+		return this.getCategories();
 	}
 
 	private isNotFoundError(error: unknown): boolean {
@@ -81,7 +99,7 @@ export class CategoryService {
 		);
 	}
 
-  private getCategories() {
+	private getCategories() {
 		return this.prisma.category.findMany({
 			select: returnCategoryObject,
 			orderBy: {

@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { CategoryService } from 'src/category/category.service';
 import { PrismaService } from 'src/prisma.service';
 import { returnProductObject } from './return-product.object';
+import { ProductDto } from './dto/product.dto';
 
 @Injectable()
 export class ProductService {
@@ -45,62 +46,85 @@ export class ProductService {
 		});
 	}
 
-	// async byCategory(categorySlug: string) {
-	// 	const products = await this.prisma.product.findMany({
-	// 		where: {
-	// 			category: {
-	// 				slug: categorySlug
-	// 			}
-	// 		},
-	// 		select: returnProductObject
-	// 	})
-
-	// 	if (!products) throw new NotFoundException('Products not found!')
-	// 	return products
-	// }
-
-	async create() {
-		// const product = await this.prisma.product.create({
-		// 	data: {
-		// 		name: '',
-		// 		description: '',
-		// 		variants: {
-    //       price: 0,
-    //       size: '',
-    //     },
-		// 		images: [],
-		// 		order: 0
-		// 	},
-		// });
-
-		// return product.id;
+	async byCategory(id: string) {
+		const category = await this.categoryService.getById(id);
+		if (!category) {
+			throw new NotFoundException('Category not found');
+		}
+		return this.prisma.product.findMany({
+			where: {
+				categoryId: category.id,
+			},
+      orderBy: {
+        order: 'asc'
+      },
+			select: returnProductObject,
+		});
 	}
 
-	// async update(id: string, dto: ProductDto) {
-	// 	const { description, image, price, name, categoryId } = dto
+	async create(dto: ProductDto) {
+		const maxOrder = await this.prisma.product.findFirst({
+			orderBy: { order: 'desc' },
+			select: { order: true },
+		});
 
-	// 	await this.categoryService.getById(categoryId)
+		const newOrder = maxOrder ? maxOrder.order + 1 : 0;
 
-	// 	return this.prisma.product.update({
-	// 		where: {
-	// 			id
-	// 		},
-	// 		data: {
-	// 			description,
-	// 			image,
-	// 			price,
-	// 			name,
-	// 			slug: generateSlug(name),
-	// 			category: {
-	// 				connect: {
-	// 					id: categoryId
-	// 				}
-	// 			}
-	// 		}
-	// 	})
-	// }
+		return this.prisma.product.create({
+			data: {
+				name: dto.name,
+				description: dto.description ?? '',
+				components: dto.components ?? '',
+				images: dto.images,
+				categoryId: dto.categoryId,
+				order: newOrder,
+				variants: {
+					create: dto.variants.map(variant => ({
+						price: variant.price,
+						size: variant.size,
+					})),
+				},
+				createdAt: new Date(),
+				updatedAt: new Date(),
+			},
+		});
+	}
 
-	// async delete(id: string) {
-	// 	return this.prisma.product.delete({ where: { id } })
-	// }
+	async update(id: string, dto: ProductDto) {
+		const { description, images, variants, components, name, categoryId } = dto;
+
+		await this.categoryService.getById(categoryId);
+
+		return this.prisma.product.update({
+			where: {
+				id,
+			},
+			data: {
+				description,
+				components,
+				images,
+				variants: {
+					create: variants,
+				},
+				name,
+				category: {
+					connect: {
+						id: categoryId,
+					},
+				},
+			},
+		});
+	}
+
+	async delete(id: string) {
+		return this.prisma.$transaction(async prisma => {
+			await prisma.productVariant.deleteMany({
+				where: { productId: id },
+			});
+
+			await prisma.product.delete({
+				where: { id },
+			});
+		});
+	}
 }
