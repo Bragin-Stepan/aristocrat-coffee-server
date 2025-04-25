@@ -9,14 +9,21 @@ import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 export class CategoryService {
 	constructor(private prisma: PrismaService) {}
 
-	async getAll() {
-		return this.prisma.category.findMany({
-			orderBy: {
-				priority: 'asc',
-			},
-			select: returnCategoryObject,
-		});
-	}
+  async getAll() {
+    return await this.prisma.category.findMany({
+      orderBy: {
+        priority: 'asc',
+      },
+      select: {
+        id: true,
+        name: true,
+        priority: true,
+        _count: {
+          select: { products: true },
+        },
+      },
+    });
+  }
 
 	async create(name: string) {
 		const maxPriority = await this.prisma.category.findFirst({

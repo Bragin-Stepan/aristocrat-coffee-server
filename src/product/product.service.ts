@@ -105,6 +105,7 @@ export class ProductService {
 				images,
 				variants: {
 					deleteMany: variants,
+					create: variants,
 				},
 				name,
 				category: {
