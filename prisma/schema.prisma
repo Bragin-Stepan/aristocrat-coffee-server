@@ -43,7 +43,7 @@ model Product {
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 
-  order       Int      @unique @default(0)
+  order       Int      @default(0)
   name        String   @unique
   description String
   components  String
@@ -77,7 +77,7 @@ model Category {
   updatedAt DateTime @updatedAt @map("updated_at")
 
   name  String @unique
-  order Int    @unique @default(0)
+  order Int    @default(0)
 
   products Product[]
 

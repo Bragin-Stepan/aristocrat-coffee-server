@@ -54,16 +54,10 @@ CREATE TABLE "category" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "product_order_key" ON "product"("order");
-
--- CreateIndex
 CREATE UNIQUE INDEX "product_name_key" ON "product"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "category_name_key" ON "category"("name");
-
--- CreateIndex
-CREATE UNIQUE INDEX "category_order_key" ON "category"("order");
 
 -- AddForeignKey
 ALTER TABLE "product" ADD CONSTRAINT "product_category_id_fkey" FOREIGN KEY ("category_id") REFERENCES "category"("id") ON DELETE SET NULL ON UPDATE CASCADE;

@@ -11,7 +11,7 @@ import {
 	ValidationPipe,
 } from '@nestjs/common';
 import { CategoryService } from './category.service';
-import { Role, User } from '@prisma/client';
+import { Role } from '@prisma/client';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { UpdateOrderDto } from './dto/update-order.dto';
 @Controller('categories')
@@ -45,11 +45,11 @@ export class CategoryController {
 		return this.categoryService.delete(id);
 	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
-	@Put('sort')
-	@Auth([Role.ADMIN])
-	async updateOrder(@Body( 'ids') dto: UpdateOrderDto) {
-		return this.categoryService.updateOrder(dto);
-	}
+  @UsePipes(new ValidationPipe())
+  @HttpCode(200)
+  @Put('/sort/edit')
+  @Auth([Role.ADMIN])
+  async updateOrder(@Body() dto: UpdateOrderDto) {
+    return this.categoryService.updateOrder(dto);
+  }
 }

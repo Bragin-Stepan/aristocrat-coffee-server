@@ -1,20 +1,16 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { returnCategoryObject } from './return-category.object';
 import { Role, User } from '@prisma/client';
 import { UpdateOrderDto } from './dto/update-order.dto';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class CategoryService {
 	constructor(private prisma: PrismaService) {}
 
 	async getAll() {
-		return this.prisma.category.findMany({
-			select: returnCategoryObject,
-			orderBy: {
-				order: 'asc',
-			},
-		});
+		return this.getCategories()
 	}
 
 	async create(name: string) {
@@ -39,31 +35,58 @@ export class CategoryService {
 			data: {
 				name: name,
 			},
-      select: returnCategoryObject,
+			select: returnCategoryObject,
 		});
 	}
 
 	async delete(id: string) {
-		return this.prisma.category.delete({
-			where: { id },
-		});
+		try {
+			await this.prisma.category.delete({
+				where: { id },
+			});
+			return { message: 'Category deleted successfully' };
+		} catch (error) {
+			if (this.isNotFoundError(error)) {
+				throw new NotFoundException('Category not found');
+			}
+			throw error;
+		}
 	}
 
 	async updateOrder(dto: UpdateOrderDto) {
-    const existingCategories = await this.prisma.category.findMany({
-      where: { id: { in: dto.ids } },
-    });
-  
-    if (existingCategories.length !== dto.ids.length) {
-      throw new Error('Some categories do not exist');
-    }
-  
-    for (let i = 0; i < dto.ids.length; i++) {
-      const categoryId = dto.ids[i];
-      await this.prisma.category.update({
-        where: { id: categoryId },
-        data: { order: i },
-      });
-    }
+    const { ids } = dto;
+    
+		const existingCategories = await this.prisma.category.findMany({
+			where: { id: { in: ids } },
+		});
+
+		if (existingCategories.length !== ids.length) {
+			throw new Error('Some categories do not exist');
+		}
+
+		for (let i = 0; i < ids.length; i++) {
+			const categoryId = ids[i];
+			await this.prisma.category.update({
+				where: { id: categoryId },
+				data: { order: i },
+			});
+		}
+
+    return this.getCategories()
+	}
+
+	private isNotFoundError(error: unknown): boolean {
+		return (
+			error instanceof PrismaClientKnownRequestError && error.code === 'P2025'
+		);
+	}
+
+  private getCategories() {
+		return this.prisma.category.findMany({
+			select: returnCategoryObject,
+			orderBy: {
+				order: 'asc',
+			},
+		});
 	}
 }
