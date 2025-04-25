@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { returnCategoryObject } from './return-category.object';
 import { Role, User } from '@prisma/client';
+import { UpdateOrderDto } from './dto/update-order.dto';
 
 @Injectable()
 export class CategoryService {
@@ -38,6 +39,7 @@ export class CategoryService {
 			data: {
 				name: name,
 			},
+      select: returnCategoryObject,
 		});
 	}
 
@@ -47,13 +49,21 @@ export class CategoryService {
 		});
 	}
 
-	async updateOrder(ids: string[]) {
-		for (let i = 0; i < ids.length; i++) {
-			const categoryId = ids[i];
-			await this.prisma.category.update({
-				where: { id: categoryId },
-				data: { order: i },
-			});
-		}
+	async updateOrder(dto: UpdateOrderDto) {
+    const existingCategories = await this.prisma.category.findMany({
+      where: { id: { in: dto.ids } },
+    });
+  
+    if (existingCategories.length !== dto.ids.length) {
+      throw new Error('Some categories do not exist');
+    }
+  
+    for (let i = 0; i < dto.ids.length; i++) {
+      const categoryId = dto.ids[i];
+      await this.prisma.category.update({
+        where: { id: categoryId },
+        data: { order: i },
+      });
+    }
 	}
 }
