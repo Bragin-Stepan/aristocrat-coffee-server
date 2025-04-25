@@ -77,7 +77,7 @@ export class AuthService {
 	private async getAuthData(user: User) {
 		const tokens = await this.issueTokens(user.id);
 		return {
-			...user,
+			user: user,
 			...tokens,
 		};
 	}
