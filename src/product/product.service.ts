@@ -104,7 +104,7 @@ export class ProductService {
 				components,
 				images,
 				variants: {
-					create: variants,
+					deleteMany: variants,
 				},
 				name,
 				category: {

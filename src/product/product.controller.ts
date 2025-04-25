@@ -39,7 +39,6 @@ export class ProductController {
 		return this.productService.create(dto);
 	}
 
-
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put(':id') 
