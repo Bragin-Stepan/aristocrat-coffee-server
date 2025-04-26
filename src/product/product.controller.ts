@@ -27,7 +27,7 @@ export class ProductController {
 	}
 
 	@UsePipes(new ValidationPipe())
-	@Get()
+	@Get( ':id')
 	async getById(@Param('id') id: string) {
 		return this.productService.getById(id);
 	}
