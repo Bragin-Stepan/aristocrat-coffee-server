@@ -19,7 +19,7 @@ export class ProductService {
 		return this.prisma.product.findMany({
 			select: returnProductObject,
 			orderBy: {
-				createdAt: 'desc',
+				priority: 'asc',
 			},
 		});
 	}
