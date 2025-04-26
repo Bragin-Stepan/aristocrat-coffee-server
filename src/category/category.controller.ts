@@ -14,6 +14,7 @@ import { CategoryService } from './category.service';
 import { Role } from '@prisma/client';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
+import { CategoryDto } from './dto/category.dto';
 @Controller('categories')
 export class CategoryController {
 	constructor(private readonly categoryService: CategoryService) {}
@@ -26,16 +27,16 @@ export class CategoryController {
 	@HttpCode(200)
 	@Post()
 	@Auth([Role.ADMIN])
-	async create(@Body('name') name: string) {
-		return this.categoryService.create(name);
+	async create(@Body() dto: CategoryDto) {
+		return this.categoryService.create(dto);
 	}
 
 	@UsePipes(new ValidationPipe())
 	@HttpCode(200)
 	@Put(':id')
 	@Auth([Role.ADMIN])
-	async update(@Param('id') id: string, @Body('name') name: string) {
-		return this.categoryService.update(id, name);
+	async update(@Param('id') id: string, @Body() dto: CategoryDto) {
+		return this.categoryService.update(id, dto);
 	}
 
 	@HttpCode(200)
@@ -44,12 +45,4 @@ export class CategoryController {
 	async delete(@Param('id') id: string) {
 		return this.categoryService.delete(id);
 	}
-
-  @UsePipes(new ValidationPipe())
-  @HttpCode(200)
-  @Put('/sort/edit')
-  @Auth([Role.ADMIN])
-  async updatePriority(@Body() dto: UpdatePriorityDto) {
-    return this.categoryService.updatePriority(dto);
-  }
 }

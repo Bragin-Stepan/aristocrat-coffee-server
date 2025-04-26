@@ -3,6 +3,7 @@ import { PrismaService } from 'src/prisma.service';
 import { returnCategoryObject } from './return-category.object';
 import { UpdatePriorityDto } from './dto/update-priority.dto';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { CategoryDto } from './dto/category.dto';
 
 @Injectable()
 export class CategoryService {
@@ -24,7 +25,7 @@ export class CategoryService {
     });
   }
 
-	async create(name: string) {
+	async create(dto : CategoryDto) {
 		const maxPriority = await this.prisma.category.findFirst({
 			orderBy: { priority: 'desc' },
 			select: { priority: true },
@@ -34,8 +35,8 @@ export class CategoryService {
 
 		return this.prisma.category.create({
 			data: {
-				name: name,
-				priority: newPriority,
+				name: dto.name,
+				priority: dto.priority || newPriority,
 			},
 		});
 	}
@@ -53,11 +54,12 @@ export class CategoryService {
 		return category;
 	}
 
-	async update(id: string, name: string) {
+	async update(id: string, dto: CategoryDto) {
 		return this.prisma.category.update({
 			where: { id },
 			data: {
-				name: name,
+				name: dto.name,
+				priority: dto.priority,
 			},
 			select: returnCategoryObject,
 		});
@@ -77,40 +79,9 @@ export class CategoryService {
 		}
 	}
 
-	async updatePriority(dto: UpdatePriorityDto) {
-		const { ids } = dto;
-
-		const existingCategories = await this.prisma.category.findMany({
-			where: { id: { in: ids } },
-		});
-
-		if (existingCategories.length !== ids.length) {
-			throw new Error('Some categories do not exist');
-		}
-
-		for (let i = 0; i < ids.length; i++) {
-			const categoryId = ids[i];
-			await this.prisma.category.update({
-				where: { id: categoryId },
-				data: { priority: i },
-			});
-		}
-
-		return this.getCategories();
-	}
-
 	private isNotFoundError(error: unknown): boolean {
 		return (
 			error instanceof PrismaClientKnownRequestError && error.code === 'P2025'
 		);
-	}
-
-	private getCategories() {
-		return this.prisma.category.findMany({
-			select: returnCategoryObject,
-			orderBy: {
-				priority: 'asc',
-			},
-		});
 	}
 }
