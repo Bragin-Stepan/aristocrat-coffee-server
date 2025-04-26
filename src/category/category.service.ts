@@ -66,22 +66,19 @@ export class CategoryService {
 	}
 
 	async delete(id: string) {
-		try {
-			await this.prisma.category.delete({
-				where: { id },
-			});
-			return { message: 'Category deleted successfully' };
-		} catch (error) {
-			if (this.isNotFoundError(error)) {
-				throw new NotFoundException('Category not found');
-			}
-			throw error;
-		}
-	}
+		const deletedCategory = await this.prisma.category.findUnique({
+			where: { id },
+			select: returnCategoryObject
+		});
 
-	private isNotFoundError(error: unknown): boolean {
-		return (
-			error instanceof PrismaClientKnownRequestError && error.code === 'P2025'
-		);
+		if (!deletedCategory) {
+			throw new NotFoundException('Category not found');
+		}
+
+		await this.prisma.category.delete({
+			where: { id }
+		});
+
+		return deletedCategory;
 	}
 }
