@@ -12,7 +12,7 @@ export class CategoryService {
   async getAll() {
     return await this.prisma.category.findMany({
       orderBy: {
-        priority: 'asc',
+        priority: 'desc',
       },
       select: {
         id: true,
