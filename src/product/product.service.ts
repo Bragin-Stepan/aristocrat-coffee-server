@@ -19,7 +19,7 @@ export class ProductService {
 		return this.prisma.product.findMany({
 			select: returnProductObject,
 			orderBy: {
-				priority: 'asc',
+				priority: 'desc',
 			},
 		});
 	}
@@ -69,7 +69,7 @@ export class ProductService {
 				categoryId: category.id,
 			},
       orderBy: {
-        priority: 'asc'
+        priority: 'desc'
       },
 			select: returnProductObject,
 		});
