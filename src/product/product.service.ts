@@ -24,6 +24,19 @@ export class ProductService {
 		});
 	}
 
+	async getById(id: string) {
+		const product = await this.prisma.product.findUnique({
+			where: {
+				id,
+			},
+			select: returnProductObject,
+		});
+		if (!product) {
+			throw new NotFoundException('Product not found');
+		}
+		return product;
+	}
+
 	async search(searchTerm: string) {
 		return this.prisma.product.findMany({
 			where: {

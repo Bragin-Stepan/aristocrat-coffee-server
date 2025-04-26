@@ -26,6 +26,12 @@ export class ProductController {
 		return this.productService.getAll(searchTerm);
 	}
 
+	@UsePipes(new ValidationPipe())
+	@Get()
+	async getById(@Param('id') id: string) {
+		return this.productService.getById(id);
+	}
+
   @Get('by-category/:id')
 	async getProductsByCategory(@Param('id') id: string) {
 		return this.productService.byCategory(id)
