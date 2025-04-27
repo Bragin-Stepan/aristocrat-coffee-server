@@ -19,9 +19,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from '@prisma/client';
-import { FullIImageUrlInterceptor } from './decorators/full-image-url.decorator';
+import { FullUrlInterceptor } from './decorators/full-url.decorator';
 
-@UseInterceptors(FullIImageUrlInterceptor)
+@UseInterceptors(FullUrlInterceptor)
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
