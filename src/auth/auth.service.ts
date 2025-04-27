@@ -7,7 +7,6 @@ import {
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { UserDto } from 'src/user/dto/user.dto';
 import { returnUserObject } from 'src/user/return-user.object';
 

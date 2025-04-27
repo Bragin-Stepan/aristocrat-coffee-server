@@ -8,6 +8,8 @@ import {
 	Post,
 	Put,
 	Query,
+	UploadedFiles,
+	UseInterceptors,
 	UsePipes,
 	ValidationPipe,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { ProductService } from './product.service';
 import { ProductDto } from './dto/product.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from '@prisma/client';
+import { FilesInterceptor } from '@nestjs/platform-express';
 
 @Controller('products')
 export class ProductController {
@@ -37,21 +40,27 @@ export class ProductController {
 		return this.productService.byCategory(id)
 	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
-	@Auth([Role.ADMIN])
-	@Post()
-	async createProduct(@Body() dto: ProductDto) {
-		return this.productService.create(dto);
-	}
 
-	@UsePipes(new ValidationPipe())
-	@HttpCode(200)
-	@Put(':id') 
+  @Post()
+  @UseInterceptors(FilesInterceptor('images'))
   @Auth([Role.ADMIN])
-	async updateProduct(@Param('id') id: string, @Body() dto: ProductDto) {
-		return this.productService.update(id, dto)
-	}
+  async createProduct(
+    @UploadedFiles() images: Express.Multer.File[],
+    @Body() dto: ProductDto,
+  ) {
+    return this.productService.create(dto, images);
+  }
+
+  @Put(':id')
+  @UseInterceptors(FilesInterceptor('images'))
+  @Auth([Role.ADMIN])
+  async updateProduct(
+    @Param('id') id: string,
+    @UploadedFiles() images: Express.Multer.File[],
+    @Body() dto: ProductDto,
+  ) {
+    return this.productService.update(id, dto, images);
+  }
 
 	@HttpCode(200)
 	@Delete(':id')

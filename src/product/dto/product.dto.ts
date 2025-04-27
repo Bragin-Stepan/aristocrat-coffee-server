@@ -1,20 +1,24 @@
 import { Prisma } from '@prisma/client'
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class VariantDto {
 
 	@IsNumber()
+	@IsNotEmpty()
 	price: number
 
 	@IsString()
+	@IsNotEmpty()
 	size: string
 }
 
 export class ProductDto {
 	@IsString()
+	@IsNotEmpty()
 	name: string
 
 	@IsArray()
+	@IsNotEmpty()
 	variants: VariantDto[];
 
 	@IsOptional()
@@ -30,5 +34,6 @@ export class ProductDto {
 	images: string[]
 
 	@IsString()
+	@IsNotEmpty()
 	categoryId: string
 }
