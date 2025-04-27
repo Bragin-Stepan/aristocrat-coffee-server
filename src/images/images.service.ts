@@ -23,7 +23,7 @@ export class ImagesService {
       },
     });
   }
-    
+
   async getImageById(id: string): Promise<ImageResponseDto> {
     const image = await this.prisma.image.findUnique({
       where: { id },
@@ -54,14 +54,14 @@ export class ImagesService {
     const unusedImages = await this.prisma.image.findMany({
       where: {
         createdAt: { lt: oneDayAgo },
-        productId: '',
+        productId: null,
       },
     });
 
     for (const image of unusedImages) {
       try {        
         // await this.fileStorageService.deleteFile(image.filename);
-
+        
         await this.prisma.image.delete({
           where: { id: image.id },
         });
