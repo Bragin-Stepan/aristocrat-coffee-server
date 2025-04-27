@@ -44,7 +44,6 @@ export class ProductController {
 
 
   @Post()
-  @UseInterceptors(FilesInterceptor('images'))
   @Auth([Role.ADMIN])
   async createProduct(
     @Body() dto: ProductDto,
@@ -53,7 +52,6 @@ export class ProductController {
   }
 
   @Put(':id')
-  @UseInterceptors(FilesInterceptor('images'))
   @Auth([Role.ADMIN])
   async updateProduct(
     @Param('id') id: string,
