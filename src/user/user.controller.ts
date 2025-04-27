@@ -15,14 +15,6 @@ export class UserController {
 		return this.userService.findAll();
 	}
 
-  @UsePipes(new ValidationPipe())
-	@HttpCode(200)
-	@Get(':id')
-	@Auth()
-  async getUser(@Param('id') id: string) {
-		return this.userService.getUser(id);
-	}
-
 	@Auth([Role.ADMIN])
 	@HttpCode(200)
 	@Delete(':id')

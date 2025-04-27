@@ -24,29 +24,6 @@ export class UserService {
 		);
 	}
 
-	async auth(dto: UserDto) {
-		const existingUser = await this.prisma.user.findUnique({
-			where: { telegramID: dto.telegramID },
-		});
-
-		const userData = this.prepareUserData(dto, existingUser?.isWasTGPremium);
-
-		const user = await this.prisma.user.upsert({
-			where: { telegramID: dto.telegramID },
-			update: {
-				...userData,
-				updatedAt: new Date(),
-			},
-			create: {
-				telegramID: dto.telegramID,
-				...userData,
-			},
-			select: returnUserObject,
-		});
-
-		return user;
-	}
-
 	async getUser(id: string) {
 		const user = await this.prisma.user.findUnique({
 			where: { id },
