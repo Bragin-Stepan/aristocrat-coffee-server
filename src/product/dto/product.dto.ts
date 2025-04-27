@@ -31,7 +31,7 @@ export class ProductDto {
 
 	@IsArray()
 	@IsString({ each: true })
-	images: string[]
+	imagesId: string[]
 
 	@IsString()
 	@IsNotEmpty()

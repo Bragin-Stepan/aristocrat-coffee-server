@@ -45,10 +45,9 @@ export class ProductController {
   @UseInterceptors(FilesInterceptor('images'))
   @Auth([Role.ADMIN])
   async createProduct(
-    @UploadedFiles() images: Express.Multer.File[],
     @Body() dto: ProductDto,
   ) {
-    return this.productService.create(dto, images);
+    return this.productService.create(dto);
   }
 
   @Put(':id')
@@ -56,10 +55,9 @@ export class ProductController {
   @Auth([Role.ADMIN])
   async updateProduct(
     @Param('id') id: string,
-    @UploadedFiles() images: Express.Multer.File[],
     @Body() dto: ProductDto,
   ) {
-    return this.productService.update(id, dto, images);
+    return this.productService.update(id, dto);
   }
 
 	@HttpCode(200)

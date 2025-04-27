@@ -2,7 +2,7 @@ import { Prisma } from '@prisma/client'
 
 export const returnUserObject: Prisma.UserSelect = {
 	id: true,
-  telegramID: true,
+  telegramId: true,
   username: true,
   firstName: true,
   lastName: true,

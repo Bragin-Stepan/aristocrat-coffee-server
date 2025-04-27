@@ -3,7 +3,7 @@ import { IsBoolean, IsNumber, IsOptional, IsString } from "class-validator";
 export class UserDto {
 
   @IsNumber()
-  telegramID: number;
+  telegramId: number;
 
   @IsString()
   username: string;

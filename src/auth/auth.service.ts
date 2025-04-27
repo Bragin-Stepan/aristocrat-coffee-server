@@ -19,14 +19,14 @@ export class AuthService {
 
 	async login(dto: UserDto) {
 		const existingUser = await this.prisma.user.findUnique({
-			where: { telegramID: dto.telegramID },
+			where: { telegramId: dto.telegramId },
 		});
 
 		const userData = this.prepareUserData(dto, existingUser?.isWasTGPremium);
 
 		const user = await this.prisma.user.upsert({
 			where: {
-				telegramID: dto.telegramID,
+				telegramId: dto.telegramId,
 				//! phoneNumber: dto.phoneNumber, // для нормальной безопасности нужон
 				//! verificationCode: dto.verificationCode, // + одноразовый код в тг
 			},
@@ -35,7 +35,7 @@ export class AuthService {
 				updatedAt: new Date(),
 			},
 			create: {
-				telegramID: dto.telegramID,
+				telegramId: dto.telegramId,
 				...userData,
 			},
 			select: returnUserObject,
