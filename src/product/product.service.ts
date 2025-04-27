@@ -3,14 +3,12 @@ import { CategoryService } from 'src/category/category.service';
 import { PrismaService } from 'src/prisma.service';
 import { returnProductObject } from './return-product.object';
 import { ProductDto } from './dto/product.dto';
-import { FilesService } from 'src/files/files.service';
 
 @Injectable()
 export class ProductService {
 	constructor(
 		private prisma: PrismaService,
 		private categoryService: CategoryService,
-		private filesService: FilesService,
 	) {}
 
 	async getAll(searchTerm?: string) {
@@ -85,20 +83,12 @@ export class ProductService {
 
 		const newPriority = maxPriority ? maxPriority.priority + 1 : 0;
 
-		const imageUrls = images
-			? await Promise.all(
-					images.map(image =>
-						this.filesService.uploadFile(image.buffer, image.originalname),
-					),
-				)
-			: [];
-
 		return this.prisma.product.create({
 			data: {
 				name: dto.name,
 				description: dto.description ?? '',
 				components: dto.components ?? '',
-				images: [...(dto.images || []), ...imageUrls],
+				images: dto.images,
 				categoryId: dto.categoryId,
 				priority: newPriority,
 				variants: {
@@ -117,14 +107,6 @@ export class ProductService {
 		const { description, images, variants, components, name, categoryId } = dto;
 
 		await this.categoryService.getById(categoryId);
-
-		const newImageUrls = newImages
-			? await Promise.all(
-					newImages.map(image =>
-						this.filesService.uploadFile(image.buffer, image.originalname),
-					),
-				)
-			: [];
 
 		return this.prisma.product.update({
 			where: {
@@ -149,16 +131,6 @@ export class ProductService {
 	}
 
 	async delete(id: string) {
-		const product = await this.prisma.product.findUnique({
-      where: { id },
-      select: { images: true },
-    });
-
-    if (product?.images?.length) {
-      await Promise.all(
-        product.images.map(url => this.filesService.deleteFile(url)),
-      );
-    }
 
     return this.prisma.$transaction(async prisma => {
       await prisma.productVariant.deleteMany({
