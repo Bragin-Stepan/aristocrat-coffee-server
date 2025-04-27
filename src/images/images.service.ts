@@ -11,7 +11,8 @@ export class ImagesService {
     return this.prisma.image.findMany();
   }
 
-  async createImage(createImageDto: CreateImageDto): Promise<ImageResponseDto> {
+  async createImage(createImageDto: CreateImageDto): Promise<ImageResponseDto> {    
+
     return this.prisma.image.create({
       data: {
         url: createImageDto.url,
@@ -22,7 +23,7 @@ export class ImagesService {
       },
     });
   }
-
+    
   async getImageById(id: string): Promise<ImageResponseDto> {
     const image = await this.prisma.image.findUnique({
       where: { id },

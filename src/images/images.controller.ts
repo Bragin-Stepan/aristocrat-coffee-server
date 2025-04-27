@@ -19,7 +19,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { extname } from 'path';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from '@prisma/client';
+import { FullIImageUrlInterceptor } from './decorators/full-image-url.decorator';
 
+@UseInterceptors(FullIImageUrlInterceptor)
 @Controller('images')
 export class ImagesController {
   constructor(private readonly imagesService: ImagesService) {}
@@ -30,7 +32,7 @@ export class ImagesController {
     FileInterceptor('image', {
       storage: diskStorage({
         destination: './uploads/images',
-        filename: (req, file, cb) => {
+        filename: (req, file: any, cb) => {
           const randomName = uuidv4();
           return cb(null, `${randomName}${extname(file.originalname)}`);
         },
@@ -42,7 +44,6 @@ export class ImagesController {
       new ParseFilePipe({
         validators: [
           new MaxFileSizeValidator({ maxSize: 10 * 1024 * 1024 }), // 10MB
-          new FileTypeValidator({ fileType: 'image/(jpeg|png|gif|webp)' }),
         ],
       }),
     )
@@ -60,7 +61,6 @@ export class ImagesController {
     return this.imagesService.createImage(imageData);
   }
 
-  @Auth([Role.ADMIN])
   @Get()
   findAll() {
     return this.imagesService.findAll();

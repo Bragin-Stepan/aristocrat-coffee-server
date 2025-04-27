@@ -18,7 +18,9 @@ import { ProductDto } from './dto/product.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from '@prisma/client';
 import { FilesInterceptor } from '@nestjs/platform-express';
+import { FullIImageUrlInterceptor } from 'src/images/decorators/full-image-url.decorator';
 
+@UseInterceptors(FullIImageUrlInterceptor)
 @Controller('products')
 export class ProductController {
 	constructor(private readonly productService: ProductService) {}
