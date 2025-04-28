@@ -36,4 +36,8 @@ export class ProductDto {
 	@IsString()
 	@IsNotEmpty()
 	categoryId: string
+
+	@IsOptional()
+	@IsNumber()
+	priority?: number
 }

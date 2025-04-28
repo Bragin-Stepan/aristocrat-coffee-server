@@ -144,6 +144,10 @@ export class ProductService {
 			where: { id },
 			data: {
 				name: dto.name,
+				description: dto.description,
+				components: dto.components,
+				categoryId: dto.categoryId,
+				priority: dto.priority,
 				images: {
 					set: dto.imagesId.map(id => ({ id })),
 				},
