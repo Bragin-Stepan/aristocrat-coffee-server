@@ -26,17 +26,11 @@ export class CategoryService {
   }
 
 	async create(dto : CategoryDto) {
-		const maxPriority = await this.prisma.category.findFirst({
-			orderBy: { priority: 'desc' },
-			select: { priority: true },
-		});
-
-		const newPriority = maxPriority ? maxPriority.priority + 1 : 0;
 
 		return this.prisma.category.create({
 			data: {
 				name: dto.name,
-				priority: dto.priority || newPriority,
+				priority: dto.priority ?? 1,
 			},
 		});
 	}

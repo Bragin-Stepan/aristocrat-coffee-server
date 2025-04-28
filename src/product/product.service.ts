@@ -78,12 +78,6 @@ export class ProductService {
 	}
 
 	async create(dto: ProductDto) {
-		const maxPriority = await this.prisma.product.findFirst({
-			orderBy: { priority: 'desc' },
-			select: { priority: true },
-		});
-
-		const newPriority = maxPriority ? maxPriority.priority + 1 : 0;
 
 		if (dto.imagesId && dto.imagesId.length > 0) {
 			await Promise.all(
@@ -102,7 +96,7 @@ export class ProductService {
 				description: dto.description ?? '',
 				components: dto.components ?? '',
 				categoryId: dto.categoryId,
-				priority: newPriority,
+				priority: dto.priority ?? 1,
 				images:
 					dto.imagesId && dto.imagesId.length > 0
 						? { connect: dto.imagesId.map(id => ({ id })) }
