@@ -64,11 +64,11 @@ export class ImagesService {
 	}
 
 	async cleanupUnusedImages(): Promise<void> {
-		const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+		const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
 
 		const unusedImages = await this.prisma.image.findMany({
 			where: {
-				createdAt: { lt: oneDayAgo },
+				createdAt: { lt: oneHourAgo },
 				productId: null,
 			},
 		});

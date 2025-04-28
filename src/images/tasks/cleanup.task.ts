@@ -8,7 +8,7 @@ export class CleanupTask {
 
   constructor(private readonly imagesService: ImagesService) {}
 
-  @Cron(CronExpression.EVERY_6_HOURS)
+  @Cron(CronExpression.EVERY_3_HOURS)
   async handleCleanup() {
     this.logger.log('Running unused images cleanup...');
     try {
