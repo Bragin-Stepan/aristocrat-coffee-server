@@ -74,15 +74,7 @@ export class ImagesService {
 		});
 
 		for (const image of unusedImages) {
-			try {
-				await this.deleteFile(image.filename);
-
-				await this.prisma.image.delete({
-					where: { id: image.id },
-				});
-			} catch (error) {
-				console.error(`Failed to delete image ${image.id}:`, error);
-			}
+			this.deleteImage(image.id);
 		}
 	}
 
