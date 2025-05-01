@@ -13,16 +13,18 @@ export class ProductService {
 		private readonly imagesService: ImagesService,
 	) {}
 
-	async getAll(searchTerm?: string) {
+	async getAll(searchTerm?: string, offset: number = 0, limit: number = 10) {
 		if (searchTerm) {
-			return this.search(searchTerm);
+			return this.search(searchTerm, offset, limit);
 		}
-
+	
 		return this.prisma.product.findMany({
 			select: returnProductObject,
 			orderBy: {
 				priority: 'desc',
 			},
+			skip: offset,
+			take: limit,
 		});
 	}
 
@@ -39,7 +41,7 @@ export class ProductService {
 		return product;
 	}
 
-	async search(searchTerm: string) {
+	async search(searchTerm: string, offset: number = 0, limit: number = 10) {
 		return this.prisma.product.findMany({
 			where: {
 				OR: [
@@ -58,6 +60,8 @@ export class ProductService {
 				],
 			},
 			select: returnProductObject,
+			skip: offset,
+			take: limit,
 		});
 	}
 

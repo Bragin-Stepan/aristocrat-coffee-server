@@ -8,7 +8,6 @@ import {
 	Post,
 	Put,
 	Query,
-	UploadedFiles,
 	UseInterceptors,
 	UsePipes,
 	ValidationPipe,
@@ -17,8 +16,8 @@ import { ProductService } from './product.service';
 import { ProductDto } from './dto/product.dto';
 import { Auth } from 'src/auth/decorators/auth.decorator';
 import { Role } from '@prisma/client';
-import { FilesInterceptor } from '@nestjs/platform-express';
 import { FullUrlInterceptor } from 'src/images/decorators/full-url.decorator';
+import { GetProductDto } from './dto/get.product.dto';
 
 @UseInterceptors(FullUrlInterceptor)
 @Controller('products')
@@ -27,8 +26,8 @@ export class ProductController {
 
 	@UsePipes(new ValidationPipe())
 	@Get()
-	async getAll(@Query('searchTerm') searchTerm?: string) {
-		return this.productService.getAll(searchTerm);
+	async getAll(@Query(){offset = '0', limit = '10', searchTerm}: GetProductDto ) {
+		return this.productService.getAll(searchTerm, +offset, +limit);
 	}
 
 	@UsePipes(new ValidationPipe())
